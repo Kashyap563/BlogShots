@@ -53,7 +53,19 @@ const createBlog=(blog)=>{
         <h1 class="blog-title">${data.title.substring(0, 100) + '...'}</h1>
         <p class="blog-overview">${data.article.substring(0, 200) + '...'}</p>
         <a href="/${blog.id}" class="btn dark">read</a>
+        <a href="/${blog.id}/editor" class="btn grey">Edit</a>
+        <a href="#"onclick="deleteBlog('${blog.id}')" class="btn danger">Delete</a>
     </div>
     `;
 
+}
+
+
+const deleteBlog=(id)=>{
+    db.collection("blogs").doc(id).delete().then(()=>{
+        location.reload();
+    })
+    .catch((error)=>{
+        console.log(error);
+    })
 }
