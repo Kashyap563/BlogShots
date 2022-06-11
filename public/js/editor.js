@@ -50,16 +50,27 @@ let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oc
 
 publishBtn.addEventListener('click', () => {
     if(articleFeild.value.length && blogTitleField.value.length){
-        // generating id
+        
+        
+        let docName;
+        if(blogId[0]=='editor'){
+            // generating id
         let letters = 'abcdefghijklmnopqrstuvwxyz';
         let blogTitle = blogTitleField.value.split(" ").join("-");
         let id = '';
         for(let i = 0; i < 4; i++){
             id += letters[Math.floor(Math.random() * letters.length)];
         }
-
-        // setting up docName
         let docName = `${blogTitle}-${id}`;
+
+        }else{
+            docName=decodeURI(blogId[0]);
+        }
+        
+        
+        
+       
+        
         let date = new Date(); // for published at info
 
         //access firstore with db variable;
@@ -84,3 +95,22 @@ auth.onAuthStateChanged((user)=>{
         location.replace("/admin");
     }
 })
+
+
+let blogId=location.pathname.split("/");
+blogId.shift();
+if(blogId[0]!="editor"){
+
+    let docRef=db.collection("blogs").doc(decodeURI(blogId[0]));
+    docRef.get().then((doc)=>{
+       if(doc.exists){
+let data=doc.data();
+bannerPath=data.bannerImage;
+banner.style.backgroundImage=`url(${bannerPath})`;
+blogTitleField.value=data.title;
+articleFeild.value=data.article;
+       }else{
+        location.replace("/");
+       }
+    })
+}
